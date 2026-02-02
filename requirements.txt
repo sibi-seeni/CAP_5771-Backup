@@ -1,0 +1,17 @@
+# API Interaction
+google-api-python-client
+
+# Database & ORM
+sqlalchemy
+
+# Environment & Config
+python-dotenv
+
+# Data Analysis
+pandas
+matplotlib
+seaborn
+
+# Sentiment Analysis
+# vaderSentiment
+# transformers
