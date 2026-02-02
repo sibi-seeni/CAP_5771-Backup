@@ -1,5 +1,6 @@
 import pandas as pd
 import sqlite3
+import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -59,7 +60,8 @@ def plot_sentiment_over_time(df):
     plt.legend()
     
     plt.tight_layout()
-    plt.savefig('sentiment_trend.png')
+    os.makedirs('figures', exist_ok=True)
+    plt.savefig(os.path.join('figures', 'sentiment_trend.png'))
     print("Plot saved as sentiment_trend.png")
 
 if __name__ == "__main__":
