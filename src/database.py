@@ -21,8 +21,8 @@ class Video(Base):
     published_at = Column(DateTime)
     keyword_matched = Column(String)
     first_seen_at = Column(DateTime, default=datetime.utcnow)
-    comments_disabled = Column(Boolean, default=False)  # For Step 3.3
-    
+    comments_disabled = Column(Boolean, default=False)  # For skipping videos that have their comments disabled
+
     # Relationship to comments
     comments = relationship("Comment", back_populates="video")
 
