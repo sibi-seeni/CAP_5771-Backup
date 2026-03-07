@@ -7,7 +7,7 @@ from .database import SessionLocal, Video, CollectionState
 
 load_dotenv()
 API_KEY = os.getenv("YOUTUBE_API_KEY")
-KEYWORDS = ["Arc Raiders", "Arc Raiders gameplay", "Arc Raiders review", "#ArcRaiders", "ARC RAIDERS", "arc raiders"]
+KEYWORDS = ["Arc Raiders", "ARC RAIDERS", "arc raiders", "#arcraiders", "#ArcRaiders", "#ARCRAIDERS", "Arc raiders", "#Arcraiders"]
 
 def get_youtube_client():
     return build("youtube", "v3", developerKey=API_KEY)
@@ -21,16 +21,17 @@ def search_new_videos():
     
     for keyword in KEYWORDS:
         state = db.query(CollectionState).filter_by(keyword=keyword).first()
-        
         if not state:
-            last_search = datetime(2025, 10, 30)
-            state = CollectionState(keyword=keyword, last_search_time=last_search)
+            state = CollectionState(keyword=keyword, last_search_time=datetime.utcnow())
             db.add(state)
-        else:
-            last_search = state.last_search_time
-
-        published_after = last_search.strftime('%Y-%m-%dT%H:%M:%SZ')
-        print(f"Searching for '{keyword}' after {published_after}...")
+            
+        # --- FORCED HISTORICAL OVERRIDE ---
+        # Ignore the database state to force a historical grab
+        # and set a 'Before' date to bypass the 500-result limit of recent videos
+        published_after = datetime(2021, 12, 9).strftime('%Y-%m-%dT%H:%M:%SZ')
+        published_before = datetime(2025, 1, 1).strftime('%Y-%m-%dT%H:%M:%SZ') 
+        
+        print(f"Searching HISTORICAL data for '{keyword}' ({published_after} to {published_before})...")
 
         next_page_token = None
         while True:
@@ -38,12 +39,12 @@ def search_new_videos():
                 q=keyword,
                 part="snippet",
                 type="video",
-                order="date",
+                order="relevance",
                 publishedAfter=published_after,
+                publishedBefore=published_before, # Stops the recent 2026 videos from flooding the results
                 videoCategoryId="20",
                 maxResults=50,
-                pageToken=next_page_token
-            )
+                pageToken=next_page_token)
             response = request.execute()
 
             for item in response.get("items", []):

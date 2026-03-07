@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from sqlalchemy import create_engine, Column, String, DateTime, ForeignKey, Text, Boolean
+from sqlalchemy import create_engine, Column, String, DateTime, ForeignKey, Text, Boolean, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -34,6 +34,8 @@ class Comment(Base):
     parent_id = Column(String, nullable=True)  # reply threading
     author_hash = Column(String)  # anonymized for ethics
     text = Column(Text)
+    # NEW: Field for Interaction Weighting (Sentiment_Score * log(1 + like_count))
+    like_count = Column(Integer, default=0) 
     published_at = Column(DateTime)
     last_updated_at = Column(DateTime)
     
