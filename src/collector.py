@@ -1,8 +1,9 @@
 import os
 import hashlib
-import logging
 from datetime import datetime
 from dotenv import load_dotenv
+import time
+from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 from sqlalchemy.orm import Session
 from .database import SessionLocal, Video, Comment # Removed the . for local execution compatibility
@@ -56,10 +57,12 @@ def collect_comments():
                     part="snippet,replies", 
                     videoId=video.video_id,
                     maxResults=50,
+                    order="time",
                     pageToken=next_page_token,
                     textFormat="plainText"
                 )
                 response = request.execute()
+                time.sleep(0.1)  # prevents hitting rate limits
 
                 for item in response.get("items", []):
                     # 1. Process Top Level Comment

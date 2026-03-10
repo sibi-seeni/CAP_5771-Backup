@@ -5,9 +5,7 @@ from src import init_db, collect_comments
 logging.basicConfig(
     filename="collection_log.txt",
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
+    format="%(asctime)s - %(levelname)s - %(message)s")
 
 def run_pipeline():
     logging.info("--- Starting Comment Collection Run ---")
@@ -30,7 +28,6 @@ def run_pipeline():
     except Exception as e:
         logging.error(f"Critical error during comment collection: {e}")
         print(f"Comment collection failed. Error logged: {e}")
-
 
 if __name__ == "__main__":
     run_pipeline()
