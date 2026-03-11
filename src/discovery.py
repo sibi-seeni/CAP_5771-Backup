@@ -12,6 +12,10 @@ KEYWORDS = ["Arc Raiders", "ARC RAIDERS", "arc raiders", "#arcraiders", "#ArcRai
 def get_youtube_client():
     return build("youtube", "v3", developerKey=API_KEY)
 
+def title_matches(title):
+    title_lower = title.lower()
+    return any(k.lower() in title_lower for k in KEYWORDS)
+
 def search_new_videos():
     youtube = get_youtube_client()
     db: Session = SessionLocal()
@@ -49,6 +53,11 @@ def search_new_videos():
 
             for item in response.get("items", []):
                 video_id = item["id"]["videoId"]
+                title = item["snippet"]["title"]
+
+                # ADD THIS FILTER HERE
+                if not title_matches(title):
+                    continue
                 
                 # UPDATED LOGIC: Check both DB and the local session set
                 if video_id not in added_this_session:
@@ -94,6 +103,11 @@ def search_new_videos():
 
             for item in response.get("items", []):
                 video_id = item["id"]["videoId"]
+                title = item["snippet"]["title"]
+
+                # ADD HERE ALSO
+                if not title_matches(title):
+                    continue
 
                 if video_id not in added_this_session:
                     exists = db.query(Video).filter_by(video_id=video_id).first()
